@@ -2,7 +2,6 @@
 import { createRequire } from 'module'
 const require = createRequire(
     import.meta.url);
-
 const express = require('express')
 const ytdl = require('ytdl-core')
 const cors = require('cors')
@@ -18,10 +17,16 @@ app.use(cors())
 
 
 app.get("/download", async(req, res) => {
+    const videoURL =  req.query.url;
+    console.log(videoURL)
+    if (!videoURL) {
+        return res.status(400).json({ error: 'Missing video URL' });
+      }
+
     try {
-        const url = req.query.url;
-        const videoId = await ytdl.getURLVideoID(url);
-        const metaInfo = await ytdl.getInfo(url);
+        const videoId =await ytdl.getURLVideoID(videoURL);
+        console.log(videoId);
+        const metaInfo = await ytdl.getInfo(videoURL);
 
         let data = {
             url: "https://www.youtube.com/embed/" + videoId,
